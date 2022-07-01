@@ -27,9 +27,40 @@ async function run() {
             const filter = { Email: req.query.email }
             const options = { upsert: true };
             const updateDoc = {
+                $push: { Task: req.body.Task }
+            }
+            console.log(req.body)
+            const result = await taskDatabase.updateOne(filter, updateDoc, options);
+        })
+        app.put("/checkedTask", async (req, res) => {
+            const filter = { Email: req.query.email }
+            const options = { upsert: true };
+            const updateDoc = {
+                $push: { completedTask: req.body.Rtask }
+            }
+
+            const result = await taskDatabase.updateOne(filter, updateDoc, options);
+        })
+        app.put("/removeTask", async (req, res) => {
+            const filter = { Email: req.query.email }
+            const updateDoc = {
+                $pull: { Task: req.body.Rtask }
+            }
+
+            const result = await taskDatabase.updateOne(filter, updateDoc);
+        })
+        app.put("/checked", async (req, res) => {
+            const filter = { Email: req.query.email }
+            const options = { upsert: true };
+            const updateDoc = {
                 $set: req.body
             }
             const result = await taskDatabase.updateOne(filter, updateDoc, options);
+        })
+        app.get('/Completetask', async (req, res) => {
+            const query = { Email: req.query.email };
+            const cursor = await taskDatabase.findOne(query);
+            res.send(cursor)
         })
         app.get('/taskOne', async (req, res) => {
             const query = { Email: req.query.email };
